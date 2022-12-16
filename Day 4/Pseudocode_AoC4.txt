@@ -1,0 +1,13 @@
+Part 1:
+
+for line in input
+    first = stoi(line[0]);
+    second = stoi(line[0]);
+    third = stoi(line[0]);
+    fourth = stoi(line[0]);
+
+	if ((3 is more than 1 but less than 2) && (4 is less than 2)) | (1 is more than 3 and less than or equal to 4) && (2 is less than or equal to 4)
+        overlapped += 1;
+
+print overlapped;        
+	

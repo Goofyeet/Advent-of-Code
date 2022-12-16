@@ -1,0 +1,12 @@
+Part 2:
+count = 1
+for line in input
+	if line 1
+		set shared equal to line 1
+	else
+		for char in shared
+			if char is not in line
+				delete char from shared
+		if count == 3
+			find priority of shared
+			sum += priority

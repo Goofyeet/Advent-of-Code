@@ -1,0 +1,48 @@
+Part 1:
+
+gap = 40
+start = 20
+end = 220
+
+for line in input
+     if line is add instruction
+          cycle++
+          checkCycle()
+          add number to x
+          cycle++
+     else
+          cycle++
+     checkcycle()
+
+checkCycle()
+     for(auto i = start; i <= 220; i++)
+          if cycle == i
+               signalStrength = cycle * x;
+               sum += signalStrength;     
+
+print sum
+
+
+Part 2:
+
+for line in input
+     if line is add instruction
+          cycle++
+          drawPixel()
+          add number to x
+     
+     cycle++
+     
+     drawPixel()
+
+drawPixel()
+     position = cycle % 40
+     x = x % 40
+     if sprite at position
+          print "#"
+     else
+          print "."
+     if position == 39
+          print new line
+
+print sum

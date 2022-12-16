@@ -1,0 +1,7 @@
+Part 1:
+create a struct type for the head and tail with x and y attributes
+for line in input
+     update x and y value of head
+     if head > 1 space away
+          move tail 1 position closer
+          numPositions++

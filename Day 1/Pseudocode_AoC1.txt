@@ -1,0 +1,11 @@
+
+
+open input.txt
+
+for line in input.txt
+	if line is blank
+		if local > largest
+			largest = local
+		local = 0
+		continue
+	local += line

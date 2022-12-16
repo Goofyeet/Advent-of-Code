@@ -1,0 +1,6 @@
+Part 1:
+
+parse crate layout into an array
+
+     
+	

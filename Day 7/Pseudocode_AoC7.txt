@@ -1,0 +1,26 @@
+Part 1:
+     
+int dirSize(string path, child array){
+    if child array is empty
+        return fileSize
+    else if
+        size += fileSize
+        for child in child array
+            size += dirSize(cwd + child[i]);
+        return size
+}
+
+for line in input
+    if line is cd ..
+        update cwd 
+        if size < 100000
+            dirSum += size
+    else if xxxxx file-name
+        fileSize += xxxxx;
+    else if dir dirName
+        numKids += 1
+        add dirName to child array
+    else if cd dirName
+        if cwd != ""
+           size = dirSize(cwd) 
+        cwd += dirName

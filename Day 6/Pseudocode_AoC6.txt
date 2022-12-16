@@ -1,0 +1,12 @@
+Part 1:
+
+num = 4;
+
+for(auto i = 0; i < line.length(); i++){
+    for count = 0; count <= 2; count++
+        for loop = 1; (loop + count) <= 3; loop++
+            if line[i + count] == line[i + loop + count];      
+}
+
+     
+	

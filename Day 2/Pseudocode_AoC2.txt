@@ -1,0 +1,17 @@
+Part 1:
+for line in input
+	if same shape
+		score += 3;
+		score += shape;
+	else if win
+		score += 6;
+return score
+
+Part 2:
+for line in input
+	if line[2] == 'Y'
+		score += 3;
+	else if line[2] == 'Z'
+		score += 6;
+	score += shape;
+return score
