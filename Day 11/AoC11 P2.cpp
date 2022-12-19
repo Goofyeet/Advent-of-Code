@@ -9,14 +9,15 @@
 
 struct monkey;
 
-std::ifstream input("input2.txt");
+std::ifstream input("input.txt");
 std::string line;
 std::smatch match;
-unsigned long long int monkeyBusiness;
-int rounds = 20;
+unsigned __int64 monkeyBusiness;
+int rounds = 10000;
 std::vector<monkey *> monkeyArr;
 int tempThrow;
 int lineNum = 1;
+int cycle = 1;
 
 struct monkey
 {
@@ -27,22 +28,24 @@ struct monkey
         mult,
         square
     } opEnum;
-    unsigned long long int opNum = 0;
+    int opNum = 0;
     int trueThrow;
     int falseThrow;
-    unsigned long long int divNum;
-    long int inspections;
+    int divNum;
+    int inspections;
     unsigned long long int updateWorry()
     {
         if (opEnum == add)
         {
             return (items[0] += opNum);
         }
-        else if(opEnum == mult)
+        else if (opEnum == mult)
         {
             return (items[0] *= opNum);
         }
-        else{
+        else
+        {
+            // return items[0];
             return (items[0] *= items[0]);
         }
     }
@@ -74,17 +77,17 @@ int main()
                 {
                     monkeyArr.back()->opEnum = monkey::mult;
                 }
-                else if(tempEnum == "+")
+                else if (tempEnum == "+")
                 {
                     monkeyArr.back()->opEnum = monkey::add;
                 }
-                
             }
             if (std::regex_search(line, match, std::regex("\\d+")))
             {
                 monkeyArr.back()->opNum = stoi(match[0].str());
             }
-            else if(std::regex_search(line, match, std::regex(" old$"))){
+            else if (std::regex_search(line, match, std::regex(" old$")))
+            {
                 monkeyArr.back()->opEnum = monkey::square;
             }
         }
@@ -93,6 +96,7 @@ int main()
             if (std::regex_search(line, match, std::regex("\\d+")))
             {
                 monkeyArr.back()->divNum = stoi(match[0].str());
+                cycle *= monkeyArr.back()->divNum;
             }
         }
         else if (((lineNum - 5) % 7) == 0)
@@ -110,6 +114,7 @@ int main()
             }
         }
         lineNum++;
+        
     }
 
     // loop through 20 rounds
@@ -123,35 +128,41 @@ int main()
             {
                 monkeyArr[m]->inspections++;
                 unsigned long long int worry = monkeyArr[m]->updateWorry();
-                //worry /= 3;
-                if ((worry % monkeyArr[m]->divNum) == 0)
+                while(worry > cycle)
+                {
+                    worry -= cycle;
+                }
+
+                int remainder = (worry % monkeyArr[m]->divNum);
+                if (remainder == 0)
                 {
                     tempThrow = monkeyArr[m]->trueThrow;
                 }
                 else
                 {
+                    // worry -= remainder;
                     tempThrow = monkeyArr[m]->falseThrow;
                 }
-
+                // worry /= monkeyArr[m]->divNum;
                 monkeyArr[tempThrow]->items.push_back(worry);
 
                 monkeyArr[m]->items.pop_front();
             }
         }
-/*
-        for (auto t = 0; t < monkeyArr.size(); t++)
-        {
-            std::cout << "Monkey " << t << ": ";
-            for (auto s = 0; s < monkeyArr[t]->items.size(); s++)
-            {
-                std::cout << monkeyArr[t]->items[s] << ", ";
-            }
-            std::cout << std::endl;
-        }
-        */
+        /*
+                for (auto t = 0; t < monkeyArr.size(); t++)
+                {
+                    std::cout << "Monkey " << t << ": ";
+                    for (auto s = 0; s < monkeyArr[t]->items.size(); s++)
+                    {
+                        std::cout << monkeyArr[t]->items[s] << ", ";
+                    }
+                    std::cout << std::endl;
+                }
+                */
     }
 
-    std::set<unsigned long long int> maxSet;
+    std::set<int> maxSet;
 
     for (auto i = 0; i < monkeyArr.size(); i++)
     {
@@ -159,8 +170,12 @@ int main()
         std::cout << "Monkey " << i << " inspected items " << monkeyArr[i]->inspections << " times. " << monkeyArr[i]->items.size() << std::endl;
     }
 
-    monkeyBusiness = (*maxSet.rbegin()) * (*(++maxSet.rbegin()));
+    int max = *maxSet.rbegin();
+    int max2 = *(++maxSet.rbegin());
+    monkeyBusiness = max * max2;
 
+    std::cout << "max: " << max << std::endl;
+    std::cout << "max2: " << max2 << std::endl;
     std::cout << "Total monkey business: " << monkeyBusiness << std::endl;
 
     return 0;
