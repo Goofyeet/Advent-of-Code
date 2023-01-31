@@ -6,161 +6,117 @@
 #include <set>
 #include <utility>
 #include <deque>
-
-struct monkey;
+#include <memory>
+#include <utility>
 
 std::ifstream input("input.txt");
 std::string line;
-std::smatch match;
-int monkeyBusiness;
-int rounds = 20;
-std::vector<monkey *> monkeyArr;
-int tempThrow;
-int lineNum = 1;
-
-struct monkey
-{
-    std::deque<int> items;
-    enum operation
+struct node
     {
-        add,
-        mult,
-        square
-    } opEnum;
-    int opNum = 0;
-    int trueThrow;
-    int falseThrow;
-    int divNum;
-    int inspections;
-    int updateWorry()
-    {
-        if (opEnum == add)
-        {
-            return (items[0] += opNum);
-        }
-        else if(opEnum == mult)
-        {
-            return (items[0] *= opNum);
-        }
-        else{
-            return (items[0] *= items[0]);
-        }
-    }
-};
+        char height = 'a';
+        bool visited = false;
+        int distance = 0;
+        int parentX = 0;
+        int parentY = 0;
+    };
+std::deque<node> nodeQueue; // a queue of nodes
+int startX = 0;
+int startY = 0;
 
-int main()
+std::vector<std::vector<node>> createGrid()
 {
+    int lineNum = 0;
+    std::vector<std::vector<node>> grid;
+
     while (getline(input, line))
     {
-        if (((lineNum - 1) % 7) == 0)
+        if (lineNum == 0)
         {
-            monkey *p = new monkey();
-            monkeyArr.push_back(p);
+            std::vector<std::vector<node>> grid(line.length(),std::vector<node>(42));
+            std::cout << line.length() << std::endl;  // 163
+            std::cout << grid.size() << std::endl;    // 163
+            std::cout << grid[0].size() << std::endl; // equal to number of lines
+            std::cout << grid[0].max_size() << std::endl;
+            std::cout << grid[0].capacity() << std::endl;
         }
-        else if (((lineNum - 2) % 7) == 0)
+        int x = 0;
+        for (char c : line)
         {
-            while (std::regex_search(line, match, std::regex("\\d+")))
+            //node tempNode = node();
+            //tempNode.height = c;
+
+            grid[x].emplace_back(node());
+            //grid[x][lineNum].height = c;
+            if (c == 'S')
             {
-                monkeyArr.back()->items.push_back(stoi(match[0].str()));
-                line = match.suffix();
+                startX = x;
+                startY = lineNum;
             }
-        }
-        else if (((lineNum - 3) % 7) == 0)
-        {
-            if (std::regex_search(line, match, std::regex("[*+]")))
-            {
-                std::string tempEnum = match[0].str();
-                if (tempEnum == "*")
-                {
-                    monkeyArr.back()->opEnum = monkey::mult;
-                }
-                else if(tempEnum == "+")
-                {
-                    monkeyArr.back()->opEnum = monkey::add;
-                }
-                
-            }
-            if (std::regex_search(line, match, std::regex("\\d+")))
-            {
-                monkeyArr.back()->opNum = stoi(match[0].str());
-            }
-            else if(std::regex_search(line, match, std::regex(" old$"))){
-                monkeyArr.back()->opEnum = monkey::square;
-            }
-        }
-        else if (((lineNum - 4) % 7) == 0)
-        {
-            if (std::regex_search(line, match, std::regex("\\d+")))
-            {
-                monkeyArr.back()->divNum = stoi(match[0].str());
-            }
-        }
-        else if (((lineNum - 5) % 7) == 0)
-        {
-            if (std::regex_search(line, match, std::regex("\\d+")))
-            {
-                monkeyArr.back()->trueThrow = stoi(match[0].str());
-            }
-        }
-        else if (((lineNum - 6) % 7) == 0)
-        {
-            if (std::regex_search(line, match, std::regex("\\d+")))
-            {
-                monkeyArr.back()->falseThrow = stoi(match[0].str());
-            }
+
+            x++;
         }
         lineNum++;
     }
+    return grid;
+}
 
-    // loop through 20 rounds
-    for (auto i = 0; i < rounds; i++)
+void addNeighbors(std::vector<std::vector<node>> grid, int x, int y)
+{
+    int parentX = x;
+    int parentY = y;
+    if (y < grid[0].size())
     {
-        // loop through each monkey
-        for (auto m = 0; m < monkeyArr.size(); m++)
+        nodeQueue.push_back(grid[x][y + 1]);
+        grid[x][y + 1].parentX = parentX;
+        grid[x][y + 1].parentY = parentY;
+    }
+    if (y > 0)
+    {
+        nodeQueue.push_back(grid[x][y - 1]);
+        grid[x][y - 1].parentX = parentX;
+        grid[x][y - 1].parentY = parentY;
+    }
+    if (x < grid.size())
+    {
+        nodeQueue.push_back(grid[x + 1][y]);
+        grid[x + 1][y].parentX = parentX;
+        grid[x + 1][y].parentY = parentY;
+    }
+    if (x > 1)
+    {
+        nodeQueue.push_back(grid[x - 1][y]);
+        grid[x - 1][y].parentX = parentX;
+        grid[x - 1][y].parentY = parentY;
+    }
+}
+
+int findShortestPath(std::vector<std::vector<node>> grid)
+{
+    int x = startX;
+    int y = startY;
+    node neighbor;
+    while (true)
+    {
+        addNeighbors(grid, x, y);
+        neighbor = nodeQueue.front();
+        if (neighbor.visited == false)
         {
-            // loop each item the monkey has
-            while (monkeyArr[m]->items.size() > 0)
+            neighbor.distance = (grid[neighbor.parentX][neighbor.parentY].distance) + 1;
+            if (neighbor.height == 'E')
             {
-                monkeyArr[m]->inspections++;
-                int worry = monkeyArr[m]->updateWorry();
-                worry /= 3;
-                if ((worry % monkeyArr[m]->divNum) == 0)
-                {
-                    tempThrow = monkeyArr[m]->trueThrow;
-                }
-                else
-                {
-                    tempThrow = monkeyArr[m]->falseThrow;
-                }
-
-                monkeyArr[tempThrow]->items.push_back(worry);
-
-                monkeyArr[m]->items.pop_front();
+                return neighbor.distance;
             }
         }
-
-        for (auto t = 0; t < monkeyArr.size(); t++)
-        {
-            std::cout << "Monkey " << t << ": ";
-            for (auto s = 0; s < monkeyArr[t]->items.size(); s++)
-            {
-                std::cout << monkeyArr[t]->items[s] << ", ";
-            }
-            std::cout << std::endl;
-        }
+        nodeQueue.pop_front();
     }
+}
 
-    std::set<int> maxSet;
+int main()
+{
+    std::vector<std::vector<node>> grid = createGrid();
+    int distance = findShortestPath(grid);
 
-    for (auto i = 0; i < monkeyArr.size(); i++)
-    {
-        maxSet.insert(monkeyArr[i]->inspections);
-        std::cout << "Monkey " << i << " inspected items " << monkeyArr[i]->inspections << " times. " << monkeyArr[i]->items.size() << std::endl;
-    }
-
-    monkeyBusiness = (*maxSet.rbegin()) * (*(++maxSet.rbegin()));
-
-    std::cout << "Total monkey business: " << monkeyBusiness << std::endl;
+    std::cout << "Fewest Steps possible: " << distance << std::endl;
 
     return 0;
 }
