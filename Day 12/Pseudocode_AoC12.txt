@@ -1,29 +1,3 @@
 Part 1:
-
-struct monkey
-{
-     items[]
-     operationEnum = {add, mult}
-     opNum = 0
-     updateWorry()
-     {
-          if operationEnum == add
-               items[0] += opNum
-          else
-               items[0] *= opNum
-     }
-     trueThrow = 0
-     falseThrow = 0
-}
-
-for line in input
-     
-for (round = 1; round < 20; round++)
-     for each monkey
-          for each items
-               worry = newWorry()
-               worry /= 3
-               if (worry % monkey.divisible) == 0
-                    throw(monkey.trueThrow)
-               else
-                    throw(monkey.falseThrow)
+        
+        
