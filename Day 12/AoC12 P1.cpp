@@ -39,6 +39,7 @@ std::vector<std::vector<node>> createGrid()
             //std::cout << grid[0].capacity() << std::endl;
         } 
             grid.at(x).emplace_back(node());
+            grid.at(x).at(lineNum).height = c;
 
             if (c == 'S')
             {
@@ -87,6 +88,7 @@ int findShortestPath(std::vector<std::vector<node>> grid)
 {
     int x = startX;
     int y = startY;
+
     node neighbor;
     while (true)
     {
@@ -95,12 +97,14 @@ int findShortestPath(std::vector<std::vector<node>> grid)
         if (neighbor.visited == false)
         {
             neighbor.distance = (grid[neighbor.parentX][neighbor.parentY].distance) + 1;
+            neighbor.visited = true;
             if (neighbor.height == 'E')
             {
                 return neighbor.distance;
             }
         }
         nodeQueue.pop_front();
+        x = neighbor.
     }
 }
 
