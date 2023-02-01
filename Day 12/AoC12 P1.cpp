@@ -50,7 +50,6 @@ std::vector<std::vector<node>> createGrid()
         }
         lineNum++;
     }
-
     return grid;
 }
 
