@@ -1,13 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <regex>
 #include <vector>
-#include <set>
-#include <utility>
 #include <deque>
-#include <memory>
-#include <utility>
 
 std::ifstream input("input.txt");
 std::string line;
@@ -30,23 +25,21 @@ std::vector<std::vector<node>> createGrid()
 
     while (getline(input, line))
     {
-        if (lineNum == 0)
-        {
-            std::vector<std::vector<node>> grid(line.length(),std::vector<node>(42));
-            std::cout << line.length() << std::endl;  // 163
-            std::cout << grid.size() << std::endl;    // 163
-            std::cout << grid[0].size() << std::endl; // equal to number of lines
-            std::cout << grid[0].max_size() << std::endl;
-            std::cout << grid[0].capacity() << std::endl;
-        }
         int x = 0;
+
         for (char c : line)
         {
-            //node tempNode = node();
-            //tempNode.height = c;
+           if (lineNum == 0)
+        {
+            grid.emplace_back(std::vector<node>());
+            //std::cout << line.length() << std::endl;  // 163
+            //std::cout << grid.size() << std::endl;    // 163
+            //std::cout << grid[0].size() << std::endl; // equal to number of lines
+            //std::cout << grid[0].max_size() << std::endl;
+            //std::cout << grid[0].capacity() << std::endl;
+        } 
+            grid.at(x).emplace_back(node());
 
-            grid[x].emplace_back(node());
-            //grid[x][lineNum].height = c;
             if (c == 'S')
             {
                 startX = x;
