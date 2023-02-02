@@ -56,8 +56,7 @@ std::vector<std::vector<node>> createGrid()
         }
         lineNum++;
     }
-    std::cout << grid[0].size() << std::endl;
-    std::cout << grid.size() << std::endl;
+
     return grid;
 }
 
@@ -71,6 +70,7 @@ void addNeighbors(std::vector<std::vector<node>>& grid, int x, int y)
         grid[x][y + 1].parentY = parentY;
         xQueue.push_back(x);
         yQueue.push_back(y + 1);
+        grid[x][y + 1].visited = true;
     }
     if ((y > 0) && (!grid[x][y - 1].visited) && (grid[x][y - 1].height <= (grid[x][y].height + 1)))
     {
@@ -78,6 +78,7 @@ void addNeighbors(std::vector<std::vector<node>>& grid, int x, int y)
         grid[x][y - 1].parentY = parentY;
         xQueue.push_back(x);
         yQueue.push_back(y - 1);
+        grid[x][y - 1].visited = true;
     }
     if ((x < (grid.size() - 1)) && (!grid[x + 1][y].visited) && (grid[x + 1][y].height <= (grid[x][y].height + 1)))
     {
@@ -85,6 +86,7 @@ void addNeighbors(std::vector<std::vector<node>>& grid, int x, int y)
         grid[x + 1][y].parentY = parentY;
         xQueue.push_back(x + 1);
         yQueue.push_back(y);
+        grid[x + 1][y].visited = true;
     }
     if ((x > 0) && (!grid[x - 1][y].visited) && (grid[x - 1][y].height <= (grid[x][y].height + 1)))
     {
@@ -92,6 +94,7 @@ void addNeighbors(std::vector<std::vector<node>>& grid, int x, int y)
         grid[x - 1][y].parentY = parentY;
         xQueue.push_back(x - 1);
         yQueue.push_back(y);
+        grid[x - 1][y].visited = true;
     }
 }
 
@@ -102,16 +105,12 @@ int findShortestPath(std::vector<std::vector<node>> grid)
 
     while (true)
     {
-        char height = grid[x][y].height;
         addNeighbors(grid, x, y);
         node& neighbor = grid[x][y];
         node parentNode = grid[neighbor.parentX][neighbor.parentY];
-            
-        //std::cout << "x: " << x << " y: " << y << " height: " << height << " neighbor.height: " << neighbor.height << " ";
 
         neighbor.distance = parentNode.distance + 1;
-        //std::cout << neighbor.distance << std::endl;
-        neighbor.visited = true;
+        
         if (neighbor.height == '{')
         {
             return neighbor.distance - 1;
