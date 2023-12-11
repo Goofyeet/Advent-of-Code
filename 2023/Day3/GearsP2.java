@@ -18,9 +18,6 @@ public class GearsP2 {
 
             //loop through lines in puzzle input
             while(fileReader.hasNextLine() || bottom.length() > 0){
-                String partNum = "";
-                boolean closeToPart = false;
-
                 //check if line is first line of input
                 if(lineCount == 1){
                     middle = fileReader.nextLine();
@@ -45,54 +42,11 @@ public class GearsP2 {
                 for(int i = 0; i < middle.length(); i++){
                     char c = middle.charAt(i);
 
-                    //check if char is a digit
-                    if(Character.isDigit(c)){
-                        partNum += String.valueOf(c);
-
-                        //if not close to part yet, check above and below
-                        if(!closeToPart){
-                            closeToPart = aboveOrBelow(top, bottom, i);
-                        }
+                    //if char is a *
+                    if(isGear(c)){
+                        int ratio = findGearRatio(i, top, middle, bottom);
+                        totalSum += ratio;
                     }
-
-                    //if char is a part
-                    else if(isPart(c)){
-                        closeToPart = true;
-
-                        //part is after a number
-                        if(partNum.length() > 0){
-                            int num = Integer.parseInt(partNum);
-                            totalSum += num;
-                            partNum = "";
-                        }
-                    }
-
-                    //char is a period
-                    else{
-                        boolean setNow = false;
-
-                        if(aboveOrBelow(top, bottom, i)){
-                            closeToPart = true;
-                            setNow = true;
-                        }
-
-                        if (closeToPart){
-                            if(partNum.length() > 0){
-                                int num = Integer.parseInt(partNum);
-                                totalSum += num;
-                            }
-
-                            if(!setNow){
-                                closeToPart = false;
-                            }
-                        }
-
-                        partNum = "";
-                    }
-                }
-                if(partNum.length() > 0 && closeToPart){
-                    int num = Integer.parseInt(partNum);
-                    totalSum += num;
                 }
 
                 lineCount++;
@@ -105,33 +59,163 @@ public class GearsP2 {
         }
     }
 
-    //special chars between 33 and 45 inclusive
     //returns true if c is a special char
-    public static boolean isPart(char c){
-        //not a digit, period, or whitespace
-        String regex = "[^\\d\\.\\s]";
+    public static boolean isGear(char c){
+        String regex = "\\*";
         String s = String.valueOf(c);
 
         return s.matches(regex);
     }
 
-    public static boolean aboveOrBelow(String top, String bottom, int i){
+    public static int findGearRatio(int index, String top, String middle, String bottom){
+        String gearNum = "";
+        char c;
+        int ratio = 1;
+        int found = 0;
 
-        if(i < top.length()){
-            char topChar = top.charAt(i);
-
-            if(isPart(topChar)){
-                return true;
+        //check left
+        int left = index - 1;
+        if(left >= 0){
+            c = middle.charAt(left);
+            if(Character.isDigit(c)){
+                found++;
+                gearNum = getGearString(left, middle);
+                ratio *= Integer.parseInt(gearNum);
             }
         }
-        if(i < bottom.length()){
-            char bottomChar = bottom.charAt(i);
 
-            if(isPart(bottomChar)){
-                return true;
+        //check right
+        int right = index + 1;
+        if(right < middle.length()){
+            c = middle.charAt(right);
+            if(Character.isDigit(c)){
+                found++;
+                gearNum = getGearString(right, middle);
+                ratio *= Integer.parseInt(gearNum);
             }
         }
 
-        return false;
+        //check top
+        if(top.length() > 0){
+            char tl = ' ';
+            char tm = ' ';
+            char tr = ' ';
+
+            if(left > 0){
+                tl = top.charAt(left);
+            }
+            tm = top.charAt(index);
+
+            if(right < top.length()){
+                tr = top.charAt(right);
+            }
+
+            //only tl and tr are digits, these are the 2 numbers
+            if(Character.isDigit(tl) && !Character.isDigit(tm) && Character.isDigit(tr)){
+                found++;
+                gearNum = getGearString(left, top);
+                ratio *= Integer.parseInt(gearNum);
+
+                found++;
+                gearNum = getGearString(right, top);
+                ratio *= Integer.parseInt(gearNum);
+            }
+            else if(Character.isDigit(tl)){
+                found++;
+                gearNum = getGearString(left, top);
+                ratio *= Integer.parseInt(gearNum);
+            }
+            else if(Character.isDigit(tm)){
+                found++;
+                gearNum = getGearString(index, top);
+                ratio *= Integer.parseInt(gearNum);
+            }
+            else if(Character.isDigit(tr)){
+                found++;
+                gearNum = getGearString(right, top);
+                ratio *= Integer.parseInt(gearNum);
+            }
+        }
+
+        //check bottom
+        if(bottom.length() > 0){
+            char bl = ' ';
+            char bm = ' ';
+            char br = ' ';
+
+            if(left > 0){
+                bl = bottom.charAt(left);
+            }
+            bm = bottom.charAt(index);
+
+            if(right < top.length()){
+                br = bottom.charAt(right);
+            }
+
+            //only tl and tr are digits, these are the 2 numbers
+            if(Character.isDigit(bl) && !Character.isDigit(bm) && Character.isDigit(br)){
+                found++;
+                gearNum = getGearString(left, bottom);
+                ratio *= Integer.parseInt(gearNum);
+
+                found++;
+                gearNum = getGearString(right, bottom);
+                ratio *= Integer.parseInt(gearNum);
+            }
+            else if(Character.isDigit(bl)){
+                found++;
+                gearNum = getGearString(left, bottom);
+                ratio *= Integer.parseInt(gearNum);
+            }
+            else if(Character.isDigit(bm)){
+                found++;
+                gearNum = getGearString(index, bottom);
+                ratio *= Integer.parseInt(gearNum);
+            }
+            else if(Character.isDigit(br)){
+                found++;
+                gearNum = getGearString(right, bottom);
+                ratio *= Integer.parseInt(gearNum);
+            }
+        }
+
+        if(found != 2){
+            ratio = 0;
+        }
+
+        return ratio;
+    }
+
+    public static String getGearString(int index, String line){
+        char c = line.charAt(index);
+        String gearString = "";
+
+        //find start of gear string
+        while(Character.isDigit(c)){
+            index--;
+
+            if(index >= 0){
+                c = line.charAt(index);
+            }
+            else{
+                break;
+            }
+        }
+
+        c = line.charAt(++index);
+
+        //build string
+        while(Character.isDigit(c)){
+            gearString += String.valueOf(c);
+            index++;
+            if(index < line.length()){
+                c = line.charAt(index);
+            }
+            else{
+                break;
+            }
+        }
+
+        return gearString;
     }
 }
