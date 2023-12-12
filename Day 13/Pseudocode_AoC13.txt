@@ -1,0 +1,42 @@
+
+index = 1
+
+left = first of pair
+right = second of pair
+
+comparePair(left, right, index)
+index++
+
+print sum
+
+
+comparePair(left, right, index)
+{
+	if both are integers
+		if left integer is lower
+			sum += index
+			return
+	else if both are lists
+		if leftList.length < rightList.length
+			sum += index
+			return
+		else if lengths are equal
+			for i < list.length
+				comparePair(left[i], right[i], index)
+		else
+			/*rightList.length is greater*/
+			pass
+			
+	/*one is a list, one is an integer*/
+	else
+		if left is integer
+			convert left to list
+		else
+			convert right to list
+			
+		comparePair(left, right, index)
+		
+		
+		
+Notes/Questions:
+- 
